@@ -26,7 +26,7 @@ public:
 template <typename R, typename T1, typename T2>
 class func : public base<R, T1, T2> {
 public:
-    func(R(*ptr)(T1, T2)) : ptr_(ptr) {}
+    func(R (*ptr)(T1, T2)) : ptr_(ptr) {}
 
     virtual R operator()(T1 a, T2 b) {
         return ptr_(a, b);
@@ -35,8 +35,9 @@ public:
     virtual func* clone() {
         return new func(*this);
     }
+
 private:
-    R(*ptr_)(T1, T2);
+    R (*ptr_)(T1, T2);
 };
 
 template <typename R, typename Class, typename T>
@@ -45,7 +46,7 @@ class member : public base<R, Class, T> {};
 template <typename R, typename Class, typename T>
 class member<R, Class*, T> : public base<R, Class*, T> {
 public:
-    member(R(Class::*ptr)(T)) : ptr_(ptr) {}
+    member(R (Class::*ptr)(T)) : ptr_(ptr) {}
 
     virtual R operator()(Class* obj, T a) {
         return (obj->*ptr_)(a);
@@ -54,8 +55,9 @@ public:
     virtual member* clone() {
         return new member(*this);
     }
+
 private:
-    R(Class::*ptr_)(T);
+    R (Class::*ptr_)(T);
 };
 
 template <typename T, typename R, typename T1, typename T2>
@@ -70,6 +72,7 @@ public:
     virtual functor* clone() {
         return new functor(*this);
     }
+
 private:
     T obj_;
 };
@@ -81,10 +84,10 @@ template <typename R, typename T1, typename T2>
 class function<R(T1, T2)> {
 public:
     template <typename Class, typename _R, typename _T2>
-    function(_R(Class::*ptr)(_T2)) : ptr_(new member<R, T1, T2>(ptr)) {}
+    function(_R (Class::*ptr)(_T2)) : ptr_(new member<R, T1, T2>(ptr)) {}
 
     template <typename _R, typename _T1, typename _T2>
-    function(_R(*ptr)(_T1, _T2)) : ptr_(new func<R, T1, T2>(ptr)) {}
+    function(_R (*ptr)(_T1, _T2)) : ptr_(new func<R, T1, T2>(ptr)) {}
 
     template <typename T>
     function(const T& obj) : ptr_(new functor<T, R, T1, T2>(obj)) {}
@@ -105,6 +108,17 @@ private:
     base<R, T1, T2>* ptr_;
 };
 
+class Point {
+public:
+    int get(int a) {
+        std::cout << "Point::get called: " << std::endl;
+        return 2;
+    }
+    int doit(Point* a, int b) {
+        std::cout << "Point::doit called: " << std::endl;
+        return 1;
+    }
+};
 class Point {
 public:
     int get(int a) {
