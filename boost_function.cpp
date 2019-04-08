@@ -22,7 +22,7 @@ public:
     }
 
     virtual func* clone() {
-        return new func(*this);
+        return new func(ptr_);
     }
 
 private:
@@ -42,7 +42,7 @@ public:
     }
 
     virtual member* clone() {
-        return new member(*this);
+        return new member(ptr_);
     }
 
 private:
@@ -59,7 +59,7 @@ public:
     }
 
     virtual functor* clone() {
-        return new functor(*this);
+        return new functor(obj_);
     }
 
 private:
@@ -97,37 +97,58 @@ private:
     base<R, T1, T2>* ptr_;
 };
 
-class Point {
+class Base {
+    virtual int VirtualMethod(int b) = 0;
+};
+
+class Point : public Base {
 public:
-    int get(int a) {
-        std::cout << "Point::get called: " << std::endl;
-        return 2;
+    int NormalMethod(int a) {
+        std::cout << "Point::NormalMethod called: " << std::endl;
+        return 1;
     }
-    int doit(Point* a, int b) {
-        std::cout << "Point::doit called: " << std::endl;
+    int BindMethod(Point* a, int b) {
+        std::cout << "Point::BindMethod called: " << std::endl;
+        return 1;
+    }
+    static int StaticMethod(Point* a, int b) {
+        std::cout << "static Point::StaticMethod called: " << std::endl;
+        return 1;
+    }
+    virtual int VirtualMethod(int b) {
+        std::cout << "virtual Point::VirtualMethod called: " << std::endl;
         return 1;
     }
 };
 
-int get(Point* p, int b) {
-    std::cout << "function pointer." << std::endl;
+int NormalFunction(Point* p, int b) {
+    std::cout << "NormalFunction pointer." << std::endl;
     return 0;
 }
 
 int main(int argc, char const* argv[]) {
-    std::vector<function<int(Point*, int)>> vf;
+    std::vector<function<int(Point*, int)>> fvector;
 
     Point point;
-    function<int(Point*, int)> f(get);
-    vf.push_back(f);
 
-    function<int(Point*, int)> m(&Point::get);
-    vf.push_back(m);
+    function<int(Point*, int)> nf(NormalFunction);
+    fvector.push_back(nf);
 
-    function<int(Point*, int)> obj(boost::bind(&Point::doit, &point, _1, _2));
-    vf.push_back(obj);
+    function<int(Point*, int)> nm(&Point::NormalMethod);
+    fvector.push_back(nm);
 
-    for (std::vector<function<int(Point*, int)>>::iterator it = vf.begin(); it != vf.end(); it++) {
-        (*it)(&point, 33);
+    function<int(Point*, int)> bind(boost::bind(&Point::BindMethod, &point, _1, _2));
+    fvector.push_back(bind);
+
+    function<int(Point*, int)> sm(&Point::StaticMethod);
+    fvector.push_back(sm);
+
+    function<int(Point*, int)> vm(&Point::VirtualMethod);
+    fvector.push_back(vm);
+
+    for (std::vector<function<int(Point*, int)>>::iterator it = fvector.begin(); it != fvector.end(); it++) {
+        (*it)(&point, 33.0);
     }
+
+    return 0;
 }
