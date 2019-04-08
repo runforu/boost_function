@@ -119,17 +119,6 @@ public:
         return 1;
     }
 };
-class Point {
-public:
-    int get(int a) {
-        std::cout << "Point::get called: " << std::endl;
-        return 2;
-    }
-    int doit(Point* a, int b) {
-        std::cout << "Point::doit called: " << std::endl;
-        return 1;
-    }
-};
 
 int get(Point* p, int b) {
     std::cout << "function pointer." << std::endl;
