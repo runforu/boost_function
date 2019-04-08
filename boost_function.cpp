@@ -1,16 +1,5 @@
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
 #include <iostream>
-
-#include <boost/foreach.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/signals2.hpp>
-#include <iostream>
-#include <regex>
-#include <string>
-#include <utility>
 #include <vector>
 
 template <typename R, typename T1, typename T2>
